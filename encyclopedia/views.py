@@ -1,4 +1,5 @@
 import markdown2
+import random 
 
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
@@ -42,4 +43,28 @@ def search(request):
     return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries()
     })
+
+def new_page(request):
+    if request.method == "POST":
+        if request.POST["q"] in util.list_entries():
+            return redirect(ErrorEntryAlreadyExists)
+        util.save_entry(request.POST["q"], request.POST["inputarea"])
+        return url_entry(request, request.POST["q"])
+    return render(request, "encyclopedia/newpage.html")
+
+def edit_page(request, name):
+    mdContent = util.get_entry(name)
+    if request.method == "POST":
+        util.save_entry(name, request.POST["inputarea"])
+        return url_entry(request, name)
+    return render(request, "encyclopedia/editpage.html", {
+        "name": name,
+        "mdContent": mdContent
+    })
+
+def random_page(request):
+    entries = util.list_entries()
+    numb = random.randint(0, len(entries)-1)
+    return url_entry(request, entries[numb])
+
 

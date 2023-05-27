@@ -4,6 +4,11 @@
     {{name}}
 {% endblock %}
 
+{% block nav %}
+    <div>
+        <a href="{% url 'editpage' name=name %}">Edit Current Page</a>
+    </div>
+{% endblock %}
 {% block body %}
     {% autoescape off %}
         {{mdContent}}
